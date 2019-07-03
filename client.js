@@ -1,5 +1,6 @@
 let grpc = require("grpc");
 var protoLoader = require("@grpc/proto-loader");
+
 const chatProtoPath = "protos/chat.proto";
 const serviceProtoPath = "protos/service.proto";
 
@@ -23,47 +24,52 @@ let clientChat = new proto.demo.Chat(
     grpc.credentials.createInsecure()
 );
 
+const username = 'Punleu 1';
+clientChat.join({ user: username },
+    (error, response) => {
+        if (error) {
+            console.error(error)
+        }
+        console.log("response===>", response)
+    }
+);
+clientChat.send({ user: username, text: 'hello 1' }, res => { });
+
+
 let clientService = new proto.multi.Service(
     REMOTE_SERVER,
     grpc.credentials.createInsecure()
 );
 
-const username = 'Punleu 1';
-clientChat.join({ user: username });
-clientChat.send({ user: username, text: 'hello 1' }, res => { });
-
-
 try {
+
+    const multiDirectionCall = clientService.bidirectionalStreamingMethod();
+
+    multiDirectionCall.on('data', (response) => {
+
+        // console.log("server response back:", multiDirectionCall)
+        // handle response
+    });
+
+    multiDirectionCall.on('end', () => {
+        console.log("server end")
+        // handle end of server
+    });
+
+
+    multiDirectionCall.on('error', () => {
+
+        console.log("server error")
+        // handle end of server
+    });
+
+    // call N times
+    multiDirectionCall.write({ message: 'hello' });
+    multiDirectionCall.write({ message: 'hello 2' });
+    multiDirectionCall.write({ message: 'hello 3' });
+    multiDirectionCall.end();
 
 } catch (ex) {
     console.log("catch error")
 
 }
-
-const multiDirectionCall = clientService.bidirectionalStreamingMethod();
-
-multiDirectionCall.on('data', (response) => {
-
-    console.log("server response back:", multiDirectionCall)
-    // handle response
-});
-
-multiDirectionCall.on('end', () => {
-    console.log("server end")
-    // handle end of server
-});
-
-
-multiDirectionCall.on('error', () => {
-
-    console.log("server error")
-    // handle end of server
-});
-
-// call N times
-multiDirectionCall.write({ message: 'hello' });
-multiDirectionCall.write({ message: 'hello 2' });
-multiDirectionCall.write({ message: 'hello 3' });
-
-// call once
-// multiDirectionCall.end();
