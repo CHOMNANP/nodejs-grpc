@@ -4,9 +4,12 @@ var protoLoader = require("@grpc/proto-loader");
 const server = new grpc.Server();
 const SERVER_ADDRESS = "0.0.0.0:5001";
 
-// Load protobuf
-let proto = grpc.loadPackageDefinition(
-    protoLoader.loadSync("protos/chat.proto", {
+const chatProtoPath = "protos/chat.proto";
+const serviceProtoPath = "protos/service.proto";
+
+//Load the protobuf
+var proto = grpc.loadPackageDefinition(
+    protoLoader.loadSync([chatProtoPath, serviceProtoPath], {
         keepCase: true,
         longs: String,
         enums: String,
@@ -17,21 +20,34 @@ let proto = grpc.loadPackageDefinition(
 
 // Receive message from client joining
 function join(call, callback) {
-    console.log({ user: "Server", text: "new user joined ..." })
+    // console.log({ user: "Server", text: "new user joined ..." })
 }
 
 // Receive message from client
 function send(call, callback) {
-    console.log("message recieved", call.request);
+    // console.log("message recieved", call.request);
+}
+
+function bidirectionalStreamingMethod(call) {
+    call.on('data', (request) => {
+        // handle request
+        call.write('Ohh man, this is response');
+        console.log("got data: ", request);
+    });
+
+    call.on('end', () => {
+        console.log("ended==>");
+        call.end();
+    });
 }
 
 // Define server with the methods and start it
 server.addService(proto.demo.Chat.service, { join: join, send: send });
+server.addService(proto.multi.Service.service, { bidirectionalStreamingMethod: bidirectionalStreamingMethod });
 
 server.bind(SERVER_ADDRESS, grpc.ServerCredentials.createInsecure());
 
 server.start();
-
 
 const Koa = require('koa');
 const app = new Koa();

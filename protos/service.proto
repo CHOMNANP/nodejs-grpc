@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package multi; //Optional: unique package name.
+
+message Request {
+    string message = 1;
+}
+
+message Response {
+}
+
+service Service {    
+    rpc bidirectionalStreamingMethod(stream Request) returns (stream Response);
+}

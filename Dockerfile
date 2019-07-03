@@ -3,7 +3,7 @@ FROM node:latest
 COPY . "/app/$PROJECT"
 
 WORKDIR "/app/$PROJECT"
-ADD package.json yarn.lock /app/
+ADD package.json /app/
 
 RUN yarn install
 
