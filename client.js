@@ -30,7 +30,7 @@ clientChat.join({ user: username },
         if (error) {
             console.error(error)
         }
-        console.log("response===>", response)
+        console.log("response===>", error, response)
     }
 );
 clientChat.send({ user: username, text: 'hello 1' }, res => { });
@@ -71,5 +71,4 @@ try {
 
 } catch (ex) {
     console.log("catch error")
-
 }

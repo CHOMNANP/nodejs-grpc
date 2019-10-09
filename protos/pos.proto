@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pos; //Optional: unique package name.
+
+message Transaction {
+    string merchant_id = 1;
+    string transaction_number = 2;
+    string amount = 3;
+    string currency = 4;
+    string pos_sale_id = 5;
+}
+
+message EmptyResponse{
+    
+}
+
+service Payment {
+    rpc completePayment(Transaction) returns (EmptyResponse){}
+}

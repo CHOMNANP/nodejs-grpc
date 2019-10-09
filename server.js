@@ -20,9 +20,17 @@ var proto = grpc.loadPackageDefinition(
 
 // Receive message from client joining
 function join(call, callback) {
-    const resPayload = { user: call.request.user, text: "new user joined ..." };
+    const resPayload = {
+        msg: [
+            { user: call.request.user, text: "new user joined ..." },
+            { user: call.request.user, text: "second line" }
+        ],
+        activeUser: { name: "Punleu" },
+        inactiveUser: [{ name: "kako" }, { name: "kiki" }]
+    };
+
+
     console.log(resPayload, callback)
-    // return resPayload;
     callback(null, resPayload);
 
 }
