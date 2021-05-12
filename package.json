@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.1",
-    "grpc": "^1.21.1",
+    "grpc": "^1.24.9",
     "koa": "^2.7.0"
   }
 }
